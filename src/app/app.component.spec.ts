@@ -16,16 +16,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'visual-program-game'`, () => {
+  it(`should have as title 'ngx-blockly'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('visual-program-game');
+    expect(app.title).toEqual('ngx-blockly');
   });
 
   it('should render title in a h1 tag', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to visual-program-game!');
+    expect(compiled.querySelector('h1').textContent).toContain('Welcome to ngx-blockly!');
   });
 });
