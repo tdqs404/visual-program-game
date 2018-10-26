@@ -1,6 +1,8 @@
-import { Component, OnInit, Output } from '@angular/core';
-// import js
+import { Component, OnInit, Input } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+// import Blockly.js
 declare var Blockly: any;
+declare var MSG: any;
 
 @Component({
   selector: 'app-editor',
@@ -10,332 +12,102 @@ declare var Blockly: any;
 export class EditorComponent implements OnInit {
   private blocklyArea: HTMLElement;
   private blocklyDiv: HTMLElement;
-  private workspace: HTMLElement;
-  constructor() {}
+  private workSpace: any;
+  /**
+   * (必需)工具箱的url，动态加载xml文件
+   */
+  @Input()
+  toolboxUrl: string;
+  /**
+   * (必需)展示标签的ID
+   */
+  @Input()
+  areaId: string;
+  /**
+   * 语言(默认值'zh-hans')
+   */
+  @Input()
+  language = 'zh-hans';
 
-  ngOnInit() {
+  constructor(private http: HttpClient) {}
+
+  async ngOnInit() {
+    document.write('<script src="assets/msg/' + this.language + '.js"></script>\n');
     this.blocklyArea = document.getElementById('blocklyArea');
+    this.styleInit();
     this.blocklyDiv = document.getElementById('blocklyDiv');
-    this.workspace = Blockly.inject('blocklyDiv', {
-      toolbox: `
-    <xml id="toolbox" style="display: none">
-      <category name="{catLogic}" colour="210">
-        <block type="controls_if"></block>
-        <block type="logic_compare"></block>
-        <block type="logic_operation"></block>
-        <block type="logic_negate"></block>
-        <block type="logic_boolean"></block>
-        <block type="logic_null"></block>
-        <block type="logic_ternary"></block>
-      </category>
-      <category name="{catLoops}" colour="120">
-        <block type="controls_repeat_ext">
-          <value name="TIMES">
-            <shadow type="math_number">
-              <field name="NUM">10</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="controls_whileUntil"></block>
-        <block type="controls_for">
-          <value name="FROM">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-          <value name="TO">
-            <shadow type="math_number">
-              <field name="NUM">10</field>
-            </shadow>
-          </value>
-          <value name="BY">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="controls_forEach"></block>
-        <block type="controls_flow_statements"></block>
-      </category>
-      <category name="{catMath}" colour="230">
-        <block type="math_number"></block>
-        <block type="math_arithmetic">
-          <value name="A">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-          <value name="B">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_single">
-          <value name="NUM">
-            <shadow type="math_number">
-              <field name="NUM">9</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_trig">
-          <value name="NUM">
-            <shadow type="math_number">
-              <field name="NUM">45</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_constant"></block>
-        <block type="math_number_property">
-          <value name="NUMBER_TO_CHECK">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_round">
-          <value name="NUM">
-            <shadow type="math_number">
-              <field name="NUM">3.1</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_on_list"></block>
-        <block type="math_modulo">
-          <value name="DIVIDEND">
-            <shadow type="math_number">
-              <field name="NUM">64</field>
-            </shadow>
-          </value>
-          <value name="DIVISOR">
-            <shadow type="math_number">
-              <field name="NUM">10</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_constrain">
-          <value name="VALUE">
-            <shadow type="math_number">
-              <field name="NUM">50</field>
-            </shadow>
-          </value>
-          <value name="LOW">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-          <value name="HIGH">
-            <shadow type="math_number">
-              <field name="NUM">100</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_random_int">
-          <value name="FROM">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-          <value name="TO">
-            <shadow type="math_number">
-              <field name="NUM">100</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_random_float"></block>
-      </category>
-      <category name="{catText}" colour="160">
-        <block type="text"></block>
-        <block type="text_join"></block>
-        <block type="text_append">
-          <value name="TEXT">
-            <shadow type="text"></shadow>
-          </value>
-        </block>
-        <block type="text_length">
-          <value name="VALUE">
-            <shadow type="text">
-              <field name="TEXT">abc</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_isEmpty">
-          <value name="VALUE">
-            <shadow type="text">
-              <field name="TEXT"></field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_indexOf">
-          <value name="VALUE">
-            <block type="variables_get">
-              <field name="VAR">{textVariable}</field>
-            </block>
-          </value>
-          <value name="FIND">
-            <shadow type="text">
-              <field name="TEXT">abc</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_charAt">
-          <value name="VALUE">
-            <block type="variables_get">
-              <field name="VAR">{textVariable}</field>
-            </block>
-          </value>
-        </block>
-        <block type="text_getSubstring">
-          <value name="STRING">
-            <block type="variables_get">
-              <field name="VAR">{textVariable}</field>
-            </block>
-          </value>
-        </block>
-        <block type="text_changeCase">
-          <value name="TEXT">
-            <shadow type="text">
-              <field name="TEXT">abc</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_trim">
-          <value name="TEXT">
-            <shadow type="text">
-              <field name="TEXT">abc</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_print">
-          <value name="TEXT">
-            <shadow type="text">
-              <field name="TEXT">abc</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_prompt_ext">
-          <value name="TEXT">
-            <shadow type="text">
-              <field name="TEXT">abc</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-      <category name="{catLists}" colour="260">
-        <block type="lists_create_with">
-          <mutation items="0"></mutation>
-        </block>
-        <block type="lists_create_with"></block>
-        <block type="lists_repeat">
-          <value name="NUM">
-            <shadow type="math_number">
-              <field name="NUM">5</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="lists_length"></block>
-        <block type="lists_isEmpty"></block>
-        <block type="lists_indexOf">
-          <value name="VALUE">
-            <block type="variables_get">
-              <field name="VAR">{listVariable}</field>
-            </block>
-          </value>
-        </block>
-        <block type="lists_getIndex">
-          <value name="VALUE">
-            <block type="variables_get">
-              <field name="VAR">{listVariable}</field>
-            </block>
-          </value>
-        </block>
-        <block type="lists_setIndex">
-          <value name="LIST">
-            <block type="variables_get">
-              <field name="VAR">{listVariable}</field>
-            </block>
-          </value>
-        </block>
-        <block type="lists_getSublist">
-          <value name="LIST">
-            <block type="variables_get">
-              <field name="VAR">{listVariable}</field>
-            </block>
-          </value>
-        </block>
-        <block type="lists_split">
-          <value name="DELIM">
-            <shadow type="text">
-              <field name="TEXT">,</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="lists_sort"></block>
-      </category>
-      <category name="{catColour}" colour="20">
-        <block type="colour_picker"></block>
-        <block type="colour_random"></block>
-        <block type="colour_rgb">
-          <value name="RED">
-            <shadow type="math_number">
-              <field name="NUM">100</field>
-            </shadow>
-          </value>
-          <value name="GREEN">
-            <shadow type="math_number">
-              <field name="NUM">50</field>
-            </shadow>
-          </value>
-          <value name="BLUE">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="colour_blend">
-          <value name="COLOUR1">
-            <shadow type="colour_picker">
-              <field name="COLOUR">#ff0000</field>
-            </shadow>
-          </value>
-          <value name="COLOUR2">
-            <shadow type="colour_picker">
-              <field name="COLOUR">#3333ff</field>
-            </shadow>
-          </value>
-          <value name="RATIO">
-            <shadow type="math_number">
-              <field name="NUM">0.5</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-      <sep></sep>
-      <category name="{catVariables}" colour="330" custom="VARIABLE"></category>
-      <category name="{catFunctions}" colour="290" custom="PROCEDURE"></category>
-    </xml>`
+    await this.http.get(this.toolboxUrl, { responseType: 'text' }).subscribe((toolboxText: string) => {
+      toolboxText = toolboxText.replace(/{(\w+)}/g, function(m, p1) {
+        return MSG[p1];
+      });
+      this.workSpace = Blockly.inject('blocklyDiv', {
+        grid: {
+          spacing: 25,
+          length: 3,
+          colour: '#ccc',
+          snap: true
+        },
+        media: 'assets/media/',
+        toolbox: Blockly.Xml.textToDom(toolboxText),
+        zoom: {
+          controls: true,
+          wheel: true
+        }
+      });
+      const onresize = () => {
+        // Compute the absolute coordinates and dimensions of blocklyArea.
+        let element: any = this.blocklyArea;
+        let x = 0;
+        let y = 0;
+        do {
+          x += element.offsetLeft;
+          y += element.offsetTop;
+          element = element.offsetParent;
+        } while (element);
+        // Position blocklyDiv over blocklyArea.
+        this.blocklyDiv.style.left = x + 'px';
+        this.blocklyDiv.style.top = y + 'px';
+        this.blocklyDiv.style.width = this.blocklyArea.offsetWidth + 'px';
+        this.blocklyDiv.style.height = this.blocklyArea.offsetHeight + 'px';
+        Blockly.svgResize(this.workSpace);
+      };
+      window.addEventListener('resize', onresize, false);
+      onresize();
+      Blockly.svgResize(this.workSpace);
     });
-
-    window.addEventListener('resize', this.onresize, false);
-    this.onresize();
-    Blockly.svgResize(this.workspace);
   }
 
-  onresize() {
-    // Compute the absolute coordinates and dimensions of blocklyArea.
-    let element = this.blocklyArea;
-    let x = 0;
-    let y = 0;
-    do {
-      x += element.offsetLeft;
-      y += element.offsetTop;
-      element = <HTMLElement>element.offsetParent;
-    } while (element);
-    // Position blocklyDiv over blocklyArea.
-    this.blocklyDiv.style.left = x + 'px';
-    this.blocklyDiv.style.top = y + 'px';
-    this.blocklyDiv.style.width = this.blocklyArea.offsetWidth + 'px';
-    this.blocklyDiv.style.height = this.blocklyArea.offsetHeight + 'px';
-    Blockly.svgResize(this.workspace);
+  /**
+   * 组件style初始化
+   * 传递组件的style给blocklyArea
+   */
+  styleInit() {
+    const parentStyle = this.blocklyArea.parentElement.style;
+    const styles = ['width', 'height'];
+    styles.forEach(element => {
+      this.blocklyArea.style[element] = parentStyle[element];
+    });
+  }
+
+  /**
+   * Execute the user's code.
+   * Just a quick and dirty eval.  Catch infinite loops.
+   */
+  runJS() {
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = '  checkTimeout();\n';
+    let timeouts = 0;
+    const checkTimeout = function() {
+      if (timeouts++ > 1000000) {
+        throw MSG['timeout'];
+      }
+    };
+    const code = Blockly.JavaScript.workSpaceToCode(this.workSpace);
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    try {
+      // tslint:disable-next-line:no-eval
+      eval(code);
+    } catch (e) {
+      alert(MSG['badCode'].replace('%1', e));
+    }
   }
 }
