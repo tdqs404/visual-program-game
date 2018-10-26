@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // import Blockly.js
 declare var Blockly: any;
@@ -9,38 +9,53 @@ declare var MSG: any;
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css']
 })
-export class EditorComponent implements OnInit {
+export class EditorComponent implements OnInit, AfterViewInit {
   private blocklyArea: HTMLElement;
   private blocklyDiv: HTMLElement;
   private workSpace: any;
+
   /**
    * (必需)工具箱的url，动态加载xml文件
    */
   @Input()
   toolboxUrl: string;
-  /**
-   * (必需)展示标签的ID
-   */
-  @Input()
-  areaId: string;
+
   /**
    * 语言(默认值'zh-hans')
    */
   @Input()
   language = 'zh-hans';
 
+  /**
+   * 展示标签的ID (多个必需不同)
+   */
+  @Input()
+  areaId = 'blocklyArea';
+
+  /**
+   * blockly标签的ID (多个必需不同)
+   */
+  @Input()
+  divId = 'blocklyDiv';
+
   constructor(private http: HttpClient) {}
 
-  async ngOnInit() {
+  ngOnInit() {
     document.write('<script src="assets/msg/' + this.language + '.js"></script>\n');
-    this.blocklyArea = document.getElementById('blocklyArea');
+  }
+
+  /**
+   * 动态加载完成标签ID后，同步初始化
+   */
+  async ngAfterViewInit() {
+    this.blocklyArea = document.getElementById(this.areaId);
     this.styleInit();
-    this.blocklyDiv = document.getElementById('blocklyDiv');
+    this.blocklyDiv = document.getElementById(this.divId);
     await this.http.get(this.toolboxUrl, { responseType: 'text' }).subscribe((toolboxText: string) => {
       toolboxText = toolboxText.replace(/{(\w+)}/g, function(m, p1) {
         return MSG[p1];
       });
-      this.workSpace = Blockly.inject('blocklyDiv', {
+      this.workSpace = Blockly.inject(this.divId, {
         grid: {
           spacing: 25,
           length: 3,

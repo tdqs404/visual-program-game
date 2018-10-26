@@ -7,9 +7,7 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  url: string;
+  url = 'assets/toolbox/toolbox.example.xml';
 
-  constructor(private http: HttpClient) {
-    this.url = 'assets/toolbox/toolbox.example.xml';
-  }
+  constructor(private http: HttpClient) {}
 }
