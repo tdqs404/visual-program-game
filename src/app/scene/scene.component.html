@@ -1,3 +1,13 @@
-<app-editor [toolboxUrl]="url" style="height: 480px; width: 80%;"></app-editor>
+<mat-grid-list cols="3" rowHeight="540">
+  <mat-grid-tile colspan=2>
+    <app-editor [toolboxUrl]="url" style="height: 540px; width: 100%;"></app-editor>
+  </mat-grid-tile>
+  <mat-grid-tile colspan=1>
+    <app-game [gameDomain]="domain" [gameUrl]="index" [gameId]="game"></app-game>
+  </mat-grid-tile>
+</mat-grid-list>
 <!-- <app-editor [toolboxUrl]="url" style="height: 240px; width: 40%;" areaId='area123' divId='div123'></app-editor> -->
-<app-game [gameDomain]="domain" [gameUrl]="index" [gameId]="game"></app-game>
+<div>
+  <button mat-button (click)="runJS()">运行</button>
+  <button mat-button (click)="discard()">清空</button>
+</div>

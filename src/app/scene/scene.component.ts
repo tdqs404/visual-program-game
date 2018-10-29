@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { BlocksService } from './blocks.service';
 
 @Component({
@@ -13,9 +12,17 @@ export class SceneComponent implements OnInit {
   index = 'index.html';
   game = 'gameIframe';
 
-  constructor(private http: HttpClient, private blocks: BlocksService) {
+  constructor(private blocks: BlocksService) {
     blocks.blockInit(this.game, this.domain);
   }
 
   ngOnInit() {}
+
+  runJS() {
+    this.blocks.runJS();
+  }
+
+  discard() {
+    this.blocks.discard();
+  }
 }

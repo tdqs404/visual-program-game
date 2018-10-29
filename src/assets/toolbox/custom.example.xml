@@ -293,6 +293,7 @@
     <sep></sep>
     <category name="{catVariables}" colour="330" custom="VARIABLE"></category>
     <category name="{catFunctions}" colour="290" custom="PROCEDURE"></category>
+    <sep></sep>
     <category name="控制" colour="180">
         <block type="block_up"></block>
         <block type="block_down"></block>

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
@@ -6,8 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit, AfterViewInit {
-  private gameElement: any;
+export class GameComponent implements OnInit {
 
   /**
    * 域名(必需)
@@ -32,13 +31,4 @@ export class GameComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {}
-
-  async ngAfterViewInit() {
-    this.gameElement = document.getElementById(this.gameId);
-    this.gameElement.onload = () => {
-      // todo unsuccess
-      console.log(this.gameElement.contentWindow);
-      this.gameElement.contentWindow.postMessage('主页面发送消息', this.gameDomain);
-    };
-  }
 }
