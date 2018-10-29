@@ -10,16 +10,16 @@ export class GameComponent implements OnInit, AfterViewInit {
   private gameElement: any;
 
   /**
-   * 域名(默认值'http://172.16.75.246:3000')
+   * 域名(必需)
    */
   @Input()
-  gameDomain = 'http://172.16.75.246:3000';
+  gameDomain: string;
 
   /**
-   * 无域名URL(默认值'index.html')
+   * 无域名URL(必需)
    */
   @Input()
-  gameUrl = 'index.html';
+  gameUrl: string;
 
   /**
    * 子IframeId (多个必需)

@@ -1,0 +1,8 @@
+<xml id="toolbox" style="display: none">
+    <category name="控制" colour="180">
+        <block type="block_up"></block>
+        <block type="block_down"></block>
+        <block type="block_left"></block>
+        <block type="block_right"></block>
+    </category>
+</xml>
