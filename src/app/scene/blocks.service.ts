@@ -69,7 +69,9 @@ export class BlocksService {
     }
   };
 
-  blockInit() {
+  blockInit(elementId: string, domain: string) {
+    this.elementId = elementId;
+    this.domain = domain;
     _.forEach(this.blocksJson, function(value, key) {
       Blockly.Blocks[key] = {
         init: function() {

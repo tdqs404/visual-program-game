@@ -14,9 +14,7 @@ export class SceneComponent implements OnInit {
   game = 'gameIframe';
 
   constructor(private http: HttpClient, private blocks: BlocksService) {
-    blocks.elementId = this.game;
-    blocks.domain = this.domain;
-    blocks.blockInit();
+    blocks.blockInit(this.game, this.domain);
   }
 
   ngOnInit() {}
