@@ -35,8 +35,9 @@ export class GameComponent implements OnInit, AfterViewInit {
 
   async ngAfterViewInit() {
     this.gameElement = document.getElementById(this.gameId);
-    this.gameElement.onreadystatechange = () => {
+    this.gameElement.onload = () => {
       // todo unsuccess
+      console.log(this.gameElement.contentWindow);
       this.gameElement.contentWindow.postMessage('主页面发送消息', this.gameDomain);
     };
   }

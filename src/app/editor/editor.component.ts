@@ -12,7 +12,7 @@ declare var MSG: any;
 export class EditorComponent implements OnInit, AfterViewInit {
   private blocklyArea: HTMLElement;
   private blocklyDiv: HTMLElement;
-  private workSpace: any;
+  private workspace: any;
 
   /**
    * (必需)工具箱的url，动态加载xml文件
@@ -55,7 +55,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
       toolboxText = toolboxText.replace(/{(\w+)}/g, function(m, p1) {
         return MSG[p1];
       });
-      this.workSpace = Blockly.inject(this.divId, {
+      this.workspace = Blockly.inject(this.divId, {
         grid: {
           spacing: 25,
           length: 3,
@@ -84,11 +84,11 @@ export class EditorComponent implements OnInit, AfterViewInit {
         this.blocklyDiv.style.top = y + 'px';
         this.blocklyDiv.style.width = this.blocklyArea.offsetWidth + 'px';
         this.blocklyDiv.style.height = this.blocklyArea.offsetHeight + 'px';
-        Blockly.svgResize(this.workSpace);
+        Blockly.svgResize(this.workspace);
       };
       window.addEventListener('resize', onresize, false);
       onresize();
-      Blockly.svgResize(this.workSpace);
+      Blockly.svgResize(this.workspace);
     });
   }
 
@@ -116,13 +116,26 @@ export class EditorComponent implements OnInit, AfterViewInit {
         throw MSG['timeout'];
       }
     };
-    const code = Blockly.JavaScript.workSpaceToCode(this.workSpace);
+    const code = Blockly.JavaScript.workspaceToCode(this.workspace);
     Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
     try {
       // tslint:disable-next-line:no-eval
       eval(code);
     } catch (e) {
       alert(MSG['badCode'].replace('%1', e));
+    }
+  }
+
+  /**
+   * Discard all blocks from the workspace.
+   */
+  discard() {
+    const count = this.workspace.getAllBlocks().length;
+    if (count < 2 || window.confirm(Blockly.Msg.DELETE_ALL_BLOCKS.replace('%1', count))) {
+      this.workspace.clear();
+      if (window.location.hash) {
+        window.location.hash = '';
+      }
     }
   }
 }
