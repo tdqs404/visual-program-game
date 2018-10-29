@@ -7,8 +7,6 @@ declare var Blockly: any;
   providedIn: 'root'
 })
 export class BlocksService {
-  elementId: string;
-  domain: string;
   constructor() {}
 
   blocksJson = {
@@ -52,26 +50,20 @@ export class BlocksService {
 
   blocksJS = {
     block_up: (block: any) => {
-      this.send('up');
-      return '// move up';
+      return 'Blockly.func.send("up");\n';
     },
     block_down: (block: any) => {
-      this.send('down');
-      return '// move down';
+      return 'Blockly.func.send("down");\n';
     },
     block_left: (block: any) => {
-      this.send('left');
-      return '// move left';
+      return 'Blockly.func.send("left");\n';
     },
     block_right: (block: any) => {
-      this.send('right');
-      return '// move right';
+      return 'Blockly.func.send("right");\n';
     }
   };
 
   blockInit(elementId: string, domain: string) {
-    this.elementId = elementId;
-    this.domain = domain;
     _.forEach(this.blocksJson, function(value, key) {
       Blockly.Blocks[key] = {
         init: function() {
@@ -83,10 +75,20 @@ export class BlocksService {
       Blockly.JavaScript[key] = value;
     });
     window.addEventListener('message', this.onMessage, false);
+    Blockly.func = {
+      send: this.send
+    };
+    Blockly.UserConfig = {
+      elementId: elementId,
+      domain: domain
+    };
   }
 
   send(msg: string) {
-    (<any>document.getElementById(this.elementId)).contentWindow.postMessage(msg, this.domain);
+    (<any>document.getElementById(Blockly.UserConfig.elementId)).contentWindow.postMessage(
+      msg,
+      Blockly.UserConfig.domain
+    );
   }
 
   onMessage(event: any) {

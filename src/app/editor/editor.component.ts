@@ -118,6 +118,7 @@ export class EditorComponent implements OnInit, AfterViewInit {
     };
     const code = Blockly.JavaScript.workspaceToCode(this.workspace);
     Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    console.log(code);
     try {
       // tslint:disable-next-line:no-eval
       eval(code);
