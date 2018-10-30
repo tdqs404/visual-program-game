@@ -89,7 +89,6 @@ export class EditorComponent implements OnInit, AfterViewInit {
       window.addEventListener('resize', onresize, false);
       onresize();
       Blockly.svgResize(this.workspace);
-      Blockly.UserConfig.workspace = this.workspace;
     });
   }
 
@@ -105,4 +104,39 @@ export class EditorComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Execute the user's code.
+   * Just a quick and dirty eval.  Catch infinite loops.
+   */
+  runJS() {
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = '  checkTimeout();\n';
+    let timeouts = 0;
+    const checkTimeout = function() {
+      if (timeouts++ > 1000000) {
+        throw MSG['timeout'];
+      }
+    };
+    const code = Blockly.JavaScript.workspaceToCode(this.workspace);
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    console.log(code);
+    try {
+      // tslint:disable-next-line:no-eval
+      eval(code);
+    } catch (e) {
+      alert(MSG['badCode'].replace('%1', e));
+    }
+  }
+
+  /**
+   * Discard all blocks from the workspace.
+   */
+  discard() {
+    const count = this.workspace.getAllBlocks().length;
+    if (count < 2 || window.confirm(Blockly.Msg.DELETE_ALL_BLOCKS.replace('%1', count))) {
+      this.workspace.clear();
+      if (window.location.hash) {
+        window.location.hash = '';
+      }
+    }
+  }
 }

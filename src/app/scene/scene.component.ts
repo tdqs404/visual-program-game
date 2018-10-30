@@ -17,12 +17,4 @@ export class SceneComponent implements OnInit {
   }
 
   ngOnInit() {}
-
-  runJS() {
-    this.blocks.runJS();
-  }
-
-  discard() {
-    this.blocks.discard();
-  }
 }

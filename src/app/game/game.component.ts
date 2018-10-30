@@ -1,13 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FuncService } from '../share/func.service';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
-
+export class GameComponent implements AfterViewInit {
   /**
    * 域名(必需)
    */
@@ -26,9 +26,11 @@ export class GameComponent implements OnInit {
   @Input()
   gameId = 'gameIframe';
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(private sanitizer: DomSanitizer, private func: FuncService) {
     console.log(this);
   }
 
-  ngOnInit() {}
+  ngAfterViewInit() {
+    window.addEventListener('message', this.func.onMessage, false);
+  }
 }
