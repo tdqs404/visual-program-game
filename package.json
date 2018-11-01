@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --prod --base-href https://visual-program-games.github.io/visual-program-games/",
+    "build": "ng build --prod --base-href https://visual-program-games.github.io/visual-program-game/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
